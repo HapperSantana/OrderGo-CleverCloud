@@ -5,6 +5,7 @@ const { verifyToken, requireRole } = require('../middleware/auth');
 const router = express.Router();
 router.use(verifyToken);
 router.get('/', controller.listOrders);
+router.get('/resumen', controller.getSummary);
 router.get('/:id', controller.getOrder);
 router.post('/', controller.createOrder);
 router.patch('/:id/estado', controller.updateOrderState);

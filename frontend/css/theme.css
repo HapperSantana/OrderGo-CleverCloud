@@ -1,0 +1,237 @@
+/* ==========================================================================
+   OrderGo — Tokens de diseño
+   Fuente única de colores, tipografía, espaciados, radios y sombras.
+   Se sobreescriben las variables de Bootstrap 5 para que todos los
+   componentes (botones, formularios, tablas, modales) compartan la identidad.
+   ========================================================================== */
+
+:root {
+  /* Marca */
+  --og-navy-950: #0b1626;
+  --og-navy-900: #0f1e33;
+  --og-navy-800: #15263d;
+  --og-navy-700: #1f3a5c;
+  --og-navy-100: #e6edf6;
+  --og-orange-700: #9a3412;
+  --og-orange-600: #c2410c;   /* acción principal: 5.2:1 con texto blanco (AA) */
+  --og-orange-500: #ea6b35;   /* acento decorativo, no para texto pequeño */
+  --og-orange-100: #ffedd5;
+  --og-orange-50: #fff7ed;
+
+  /* Neutros */
+  --og-bg: #f4f6fa;
+  --og-surface: #ffffff;
+  --og-surface-muted: #f8fafc;
+  --og-border: #e2e8f0;
+  --og-border-strong: #cbd5e1;
+  --og-text: #1e293b;
+  --og-text-muted: #556274;   /* 5.9:1 sobre blanco */
+  --og-text-subtle: #64748b;  /* 4.8:1 sobre blanco */
+
+  /* Estados semánticos (texto / fondo) */
+  --og-success: #15803d;
+  --og-success-bg: #dcfce7;
+  --og-warning: #a16207;
+  --og-warning-text: #854d0e;
+  --og-warning-bg: #fef3c7;
+  --og-danger: #b91c1c;
+  --og-danger-bg: #fee2e2;
+  --og-info: #1d4ed8;
+  --og-info-bg: #dbeafe;
+  --og-teal: #0f766e;
+  --og-teal-bg: #ccfbf1;
+
+  /* Tipografía */
+  --og-font: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --og-fs-xs: .75rem;      /* 12px: metadatos, encabezados de tabla */
+  --og-fs-sm: .875rem;     /* 14px: tablas, etiquetas, mensajes */
+  --og-fs-base: .9375rem;  /* 15px: cuerpo y formularios */
+  --og-fs-lg: 1.125rem;    /* 18px: subtítulos de tarjeta */
+  --og-fs-xl: 1.5rem;      /* 24px: títulos de sección */
+  --og-fs-2xl: 1.875rem;   /* 30px: KPIs */
+  --og-fw-regular: 400;
+  --og-fw-medium: 500;
+  --og-fw-semibold: 600;
+  --og-fw-bold: 700;
+
+  /* Forma y profundidad */
+  --og-radius-sm: .5rem;
+  --og-radius: .75rem;
+  --og-radius-lg: 1rem;
+  --og-shadow-sm: 0 1px 2px rgba(15, 30, 51, .06);
+  --og-shadow: 0 1px 3px rgba(15, 30, 51, .06), 0 6px 16px rgba(15, 30, 51, .05);
+  --og-shadow-lg: 0 20px 50px rgba(15, 30, 51, .18);
+  --og-focus-ring: 0 0 0 .2rem rgba(194, 65, 12, .35);
+
+  /* Layout */
+  --og-sidebar-w: 264px;
+  --og-sidebar-w-collapsed: 80px;
+  --og-topbar-h: 64px;
+  --og-transition: 160ms ease;
+
+  /* ---- Puente con Bootstrap 5 ---- */
+  --bs-body-font-family: var(--og-font);
+  --bs-body-font-size: var(--og-fs-base);
+  --bs-body-color: var(--og-text);
+  --bs-body-bg: var(--og-bg);
+  --bs-secondary-color: var(--og-text-muted);
+  --bs-border-color: var(--og-border);
+  --bs-border-radius: var(--og-radius-sm);
+  --bs-border-radius-lg: var(--og-radius);
+  --bs-primary: var(--og-orange-600);
+  --bs-primary-rgb: 194, 65, 12;
+  --bs-link-color: var(--og-orange-600);
+  --bs-link-color-rgb: 194, 65, 12;
+  --bs-link-hover-color: var(--og-orange-700);
+  --bs-link-hover-color-rgb: 154, 52, 18;
+  --bs-focus-ring-color: rgba(194, 65, 12, .35);
+  --bs-success: var(--og-success);
+  --bs-danger: var(--og-danger);
+  --bs-warning: var(--og-warning);
+}
+
+/* Botones Bootstrap con la paleta de OrderGo */
+.btn {
+  --bs-btn-font-weight: var(--og-fw-semibold);
+  --bs-btn-font-size: var(--og-fs-sm);
+  --bs-btn-padding-y: .55rem;
+  --bs-btn-padding-x: 1rem;
+  --bs-btn-border-radius: var(--og-radius-sm);
+  --bs-btn-focus-box-shadow: var(--og-focus-ring);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  min-height: 2.5rem;
+}
+.btn-sm {
+  --bs-btn-padding-y: .35rem;
+  --bs-btn-padding-x: .7rem;
+  --bs-btn-font-size: var(--og-fs-xs);
+  min-height: 2rem;
+}
+.btn-lg { min-height: 3rem; --bs-btn-font-size: var(--og-fs-base); }
+.btn-primary {
+  --bs-btn-bg: var(--og-orange-600);
+  --bs-btn-border-color: var(--og-orange-600);
+  --bs-btn-hover-bg: var(--og-orange-700);
+  --bs-btn-hover-border-color: var(--og-orange-700);
+  --bs-btn-active-bg: var(--og-orange-700);
+  --bs-btn-active-border-color: var(--og-orange-700);
+  --bs-btn-disabled-bg: var(--og-orange-600);
+  --bs-btn-disabled-border-color: var(--og-orange-600);
+}
+.btn-dark {
+  --bs-btn-bg: var(--og-navy-800);
+  --bs-btn-border-color: var(--og-navy-800);
+  --bs-btn-hover-bg: var(--og-navy-700);
+  --bs-btn-hover-border-color: var(--og-navy-700);
+}
+.btn-light {
+  --bs-btn-bg: var(--og-surface);
+  --bs-btn-border-color: var(--og-border-strong);
+  --bs-btn-color: var(--og-text);
+  --bs-btn-hover-bg: var(--og-surface-muted);
+  --bs-btn-hover-border-color: var(--og-text-subtle);
+  --bs-btn-active-bg: var(--og-navy-100);
+}
+.btn-outline-danger {
+  --bs-btn-color: var(--og-danger);
+  --bs-btn-border-color: #fca5a5;
+  --bs-btn-hover-bg: var(--og-danger);
+  --bs-btn-hover-border-color: var(--og-danger);
+}
+.btn-danger {
+  --bs-btn-bg: var(--og-danger);
+  --bs-btn-border-color: var(--og-danger);
+  --bs-btn-hover-bg: #991b1b;
+  --bs-btn-hover-border-color: #991b1b;
+}
+.btn-success {
+  --bs-btn-bg: var(--og-success);
+  --bs-btn-border-color: var(--og-success);
+  --bs-btn-hover-bg: #166534;
+  --bs-btn-hover-border-color: #166534;
+}
+
+/* Formularios */
+.form-label {
+  font-size: var(--og-fs-sm);
+  font-weight: var(--og-fw-semibold);
+  color: var(--og-text);
+  margin-bottom: .35rem;
+}
+.form-control,
+.form-select {
+  font-size: var(--og-fs-base);
+  border-color: var(--og-border-strong);
+  border-radius: var(--og-radius-sm);
+  min-height: 2.75rem;
+}
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--og-orange-600);
+  box-shadow: var(--og-focus-ring);
+}
+.form-text { font-size: var(--og-fs-xs); color: var(--og-text-muted); }
+.invalid-feedback { font-size: var(--og-fs-xs); font-weight: var(--og-fw-medium); }
+.required-mark { color: var(--og-danger); margin-left: .15rem; }
+
+/* Modales y menús */
+.modal-content {
+  border: 0;
+  border-radius: var(--og-radius-lg);
+  box-shadow: var(--og-shadow-lg);
+}
+.modal-header { border-bottom-color: var(--og-border); padding: 1.1rem 1.5rem; }
+.modal-body { padding: 1.5rem; }
+.modal-footer { border-top-color: var(--og-border); padding: .9rem 1.5rem; }
+.modal-title { font-size: var(--og-fs-lg); font-weight: var(--og-fw-bold); }
+.dropdown-menu {
+  --bs-dropdown-font-size: var(--og-fs-sm);
+  --bs-dropdown-link-active-bg: var(--og-orange-600);
+  border-color: var(--og-border);
+  border-radius: var(--og-radius);
+  box-shadow: var(--og-shadow);
+  padding: .4rem;
+}
+.dropdown-item { border-radius: var(--og-radius-sm); padding: .5rem .75rem; display: flex; align-items: center; gap: .55rem; }
+
+/* Tablas */
+.table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: var(--og-surface-muted);
+  font-size: var(--og-fs-sm);
+  margin-bottom: 0;
+}
+.table > thead th {
+  font-size: var(--og-fs-xs);
+  font-weight: var(--og-fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--og-text-muted);
+  background: var(--og-surface-muted);
+  border-bottom: 1px solid var(--og-border);
+  padding: .75rem 1rem;
+  white-space: nowrap;
+}
+.table > tbody td { padding: .85rem 1rem; vertical-align: middle; border-color: var(--og-border); }
+.table > tbody tr:last-child td { border-bottom: 0; }
+
+/* Foco visible y consistente en toda la app (WCAG 2.4.7 / 2.4.11) */
+:focus-visible {
+  outline: 3px solid var(--og-orange-600);
+  outline-offset: 2px;
+}
+.btn:focus-visible,
+.form-control:focus-visible,
+.form-select:focus-visible { outline: 0; box-shadow: var(--og-focus-ring); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

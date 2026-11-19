@@ -3,41 +3,67 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Sistema de gestion de pedidos OrderGo">
+  <meta name="description" content="OrderGo: sistema de gestión de pedidos para restaurantes y negocios de comida">
+  <meta name="theme-color" content="#0f1e33">
   <title>Iniciar sesión | OrderGo</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <script src="/js/login.js" defer></script>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/inter/wght.css">
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/js/login.js" type="module"></script>
 </head>
-<body class="login-page">
-  <main class="login-shell">
-    <section class="login-brand">
-      <div class="brand-mark">OG</div>
-      <p class="eyebrow">GESTIÓN PARA NEGOCIOS DE COMIDA</p>
-      <h1>Order<span>Go</span></h1>
-      <p class="brand-copy">Organiza tus clientes, productos y pedidos desde un solo lugar.</p>
-      <div class="brand-points">
-        <span>✓ Pedidos organizados</span>
-        <span>✓ Estados en tiempo real al consultar</span>
-        <span>✓ Acceso protegido por usuario</span>
+<body class="login-body">
+  <div class="login-layout">
+    <section class="login-hero" aria-labelledby="heroTitle">
+      <span class="brand">
+        <span class="brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="m9.5 14.5 2 2 3.5-4"/></svg></span>
+        <span><span class="brand-name">Order<span>Go</span></span><span class="brand-tag">Gestión de pedidos</span></span>
+      </span>
+      <div class="login-hero-copy">
+        <p class="eyebrow">Para restaurantes y cocinas</p>
+        <h1 id="heroTitle">Toma pedidos más rápido y mantén tu cocina en orden.</h1>
+        <p>Registra pedidos, da seguimiento a cada estado y administra clientes y productos desde un solo lugar.</p>
+        <ul class="feature-list">
+          <li><i class="bi bi-lightning-charge" aria-hidden="true"></i><div><strong>Pedidos en segundos</strong><span>Agrega varios productos y confirma con el total calculado.</span></div></li>
+          <li><i class="bi bi-kanban" aria-hidden="true"></i><div><strong>Seguimiento por estado</strong><span>De pendiente a entregado, siempre sabes qué sigue.</span></div></li>
+          <li><i class="bi bi-people" aria-hidden="true"></i><div><strong>Equipo con permisos</strong><span>Administradores y empleados con accesos diferenciados.</span></div></li>
+        </ul>
       </div>
+      <p class="login-hero-foot mb-0">© OrderGo · Sistema de gestión para negocios de comida</p>
     </section>
 
-    <section class="login-card">
-      <div class="card-heading">
-        <p class="eyebrow">BIENVENIDO</p>
+    <main class="login-panel">
+      <div class="og-card login-card">
         <h2>Iniciar sesión</h2>
-        <p>Ingresa tus credenciales para continuar.</p>
+        <p class="lead-text">Ingresa con tu cuenta del negocio para continuar.</p>
+
+        <div class="alert alert-warning d-flex gap-2 small" id="loginNotice" role="status" hidden></div>
+        <div class="alert alert-danger d-flex gap-2 small" id="loginError" role="alert" hidden></div>
+
+        <form id="loginForm" novalidate>
+          <div class="mb-3">
+            <label for="correo" class="form-label" data-name="El correo">Correo electrónico</label>
+            <div class="input-icon">
+              <i class="bi bi-envelope" aria-hidden="true"></i>
+              <input id="correo" name="correo" type="email" class="form-control" autocomplete="username" placeholder="usuario@negocio.com" maxlength="120" required autofocus>
+            </div>
+          </div>
+          <div class="mb-4">
+            <label for="password" class="form-label" data-name="La contraseña">Contraseña</label>
+            <div class="input-icon password-field">
+              <i class="bi bi-lock" aria-hidden="true"></i>
+              <input id="password" name="password" type="password" class="form-control" autocomplete="current-password" placeholder="Tu contraseña" maxlength="200" required>
+              <button type="button" class="password-toggle" id="togglePassword" aria-label="Mostrar contraseña" aria-pressed="false" aria-controls="password"><i class="bi bi-eye" aria-hidden="true"></i></button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-lg w-100" type="submit" id="loginButton"><span>Entrar al sistema</span><i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+        </form>
+
+        <p class="login-foot mb-0"><i class="bi bi-shield-lock" aria-hidden="true"></i>Acceso exclusivo para personal autorizado.</p>
       </div>
-      <form id="loginForm" class="form-stack">
-        <label for="correo">Correo electrónico</label>
-        <input id="correo" name="correo" type="email" autocomplete="username" placeholder="usuario@negocio.com" required>
-        <label for="password">Contraseña</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="Tu contraseña" required>
-        <button class="btn btn-primary btn-wide" type="submit" id="loginButton">Entrar al sistema</button>
-        <p id="loginMessage" class="form-message" role="alert" aria-live="polite"></p>
-      </form>
-      <p class="login-footnote">Acceso exclusivo para personal autorizado del negocio.</p>
-    </section>
-  </main>
+    </main>
+  </div>
 </body>
 </html>

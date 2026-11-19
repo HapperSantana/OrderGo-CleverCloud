@@ -12,7 +12,12 @@ async function listClients(req, res) {
       ORDER BY nombre LIMIT ? OFFSET ?`,
     [q, pattern, pattern, pattern, limit, offset]
   );
-  return res.json({ datos: rows, paginacion: { page, limit } });
+  const [[count]] = await pool.execute(
+    `SELECT COUNT(*) AS total FROM clientes
+      WHERE (? = '' OR nombre LIKE ? OR telefono LIKE ? OR correo LIKE ?)`,
+    [q, pattern, pattern, pattern]
+  );
+  return res.json({ datos: rows, paginacion: { page, limit, total: Number(count.total) } });
 }
 
 async function getClient(req, res) {

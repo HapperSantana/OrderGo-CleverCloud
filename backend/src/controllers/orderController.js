@@ -3,21 +3,60 @@ const { parseId, parsePagination, cleanString } = require('../utils/http');
 
 const STATES = ['pendiente', 'en_preparacion', 'listo', 'entregado', 'cancelado'];
 
-async function listOrders(req, res) {
-  const { page, limit, offset } = parsePagination(req.query);
-  const estado = typeof req.query.estado === 'string' && STATES.includes(req.query.estado) ? req.query.estado : '';
-  const [rows] = await pool.execute(
-    `SELECT p.id_pedido, p.fecha, p.total, p.estado, p.observaciones,
+const ORDER_SELECT = `SELECT p.id_pedido, p.fecha, p.total, p.estado, p.observaciones,
             c.id_cliente, c.nombre AS cliente,
             u.id_usuario, u.nombre AS registrado_por
        FROM pedidos p
        INNER JOIN clientes c ON c.id_cliente = p.id_cliente
-       INNER JOIN usuarios u ON u.id_usuario = p.id_usuario
-      WHERE (? = '' OR p.estado = ?)
-      ORDER BY p.fecha DESC, p.id_pedido DESC LIMIT ? OFFSET ?`,
-    [estado, estado, limit, offset]
+       INNER JOIN usuarios u ON u.id_usuario = p.id_usuario`;
+
+async function listOrders(req, res) {
+  const { page, limit, offset } = parsePagination(req.query);
+  const estado = typeof req.query.estado === 'string' && STATES.includes(req.query.estado) ? req.query.estado : '';
+  const q = typeof req.query.q === 'string' ? req.query.q.trim().replace(/^#/, '').slice(0, 100) : '';
+  const qId = /^\d{1,15}$/.test(q) ? Number(q) : 0;
+  // Solo se permiten dos valores fijos; nunca se interpola texto del usuario en el SQL.
+  const direction = req.query.orden === 'asc' ? 'ASC' : 'DESC';
+  const where = `WHERE (? = '' OR p.estado = ?)
+        AND (? = '' OR p.id_pedido = ? OR c.nombre LIKE ?)`;
+  const params = [estado, estado, q, qId, `%${q}%`];
+
+  const [rows] = await pool.execute(
+    `${ORDER_SELECT}
+      ${where}
+      ORDER BY p.fecha ${direction}, p.id_pedido ${direction} LIMIT ? OFFSET ?`,
+    [...params, limit, offset]
   );
-  return res.json({ datos: rows, paginacion: { page, limit } });
+  const [[count]] = await pool.execute(
+    `SELECT COUNT(*) AS total
+       FROM pedidos p
+       INNER JOIN clientes c ON c.id_cliente = p.id_cliente
+      ${where}`,
+    params
+  );
+  return res.json({ datos: rows, paginacion: { page, limit, total: Number(count.total) } });
+}
+
+async function getSummary(req, res) {
+  const [stateRows] = await pool.execute(
+    `SELECT estado, COUNT(*) AS total FROM pedidos GROUP BY estado`
+  );
+  const pedidos = { total: 0 };
+  for (const state of STATES) pedidos[state] = 0;
+  for (const row of stateRows) {
+    pedidos[row.estado] = Number(row.total);
+    pedidos.total += Number(row.total);
+  }
+  const [[clients]] = await pool.execute(`SELECT COUNT(*) AS total FROM clientes`);
+  const [[products]] = await pool.execute(`SELECT COUNT(*) AS total FROM productos WHERE disponible = 1`);
+  const [recent] = await pool.execute(
+    `${ORDER_SELECT}
+      ORDER BY p.fecha DESC, p.id_pedido DESC LIMIT 5`
+  );
+  return res.json({
+    resumen: { pedidos, clientes: Number(clients.total), productos_disponibles: Number(products.total) },
+    recientes: recent
+  });
 }
 
 async function getOrder(req, res) {
@@ -132,4 +171,4 @@ async function deleteOrder(req, res) {
   return res.json({ mensaje: 'Pedido eliminado.' });
 }
 
-module.exports = { listOrders, getOrder, createOrder, updateOrderState, deleteOrder };
+module.exports = { listOrders, getSummary, getOrder, createOrder, updateOrderState, deleteOrder };

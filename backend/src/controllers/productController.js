@@ -14,7 +14,13 @@ async function listProducts(req, res) {
       ORDER BY nombre LIMIT ? OFFSET ?`,
     [q, pattern, includeUnavailable ? 1 : 0, limit, offset]
   );
-  return res.json({ datos: rows, paginacion: { page, limit } });
+  const [[count]] = await pool.execute(
+    `SELECT COUNT(*) AS total FROM productos
+      WHERE (? = '' OR nombre LIKE ?)
+        AND (? = 1 OR disponible = 1)`,
+    [q, pattern, includeUnavailable ? 1 : 0]
+  );
+  return res.json({ datos: rows, paginacion: { page, limit, total: Number(count.total) } });
 }
 
 async function createProduct(req, res) {

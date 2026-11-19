@@ -11,7 +11,8 @@ async function listUsers(req, res) {
        FROM usuarios ORDER BY id_usuario DESC LIMIT ? OFFSET ?`,
     [limit, offset]
   );
-  return res.json({ datos: rows, paginacion: { page, limit } });
+  const [[count]] = await pool.execute(`SELECT COUNT(*) AS total FROM usuarios`);
+  return res.json({ datos: rows, paginacion: { page, limit, total: Number(count.total) } });
 }
 
 async function createUser(req, res) {

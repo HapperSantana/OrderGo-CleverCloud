@@ -3,67 +3,484 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Panel de administración de OrderGo">
+  <meta name="description" content="OrderGo: panel de gestión de pedidos, clientes y productos para negocios de comida">
+  <meta name="theme-color" content="#0f1e33">
   <title>Panel | OrderGo</title>
-  <link rel="stylesheet" href="/css/styles.css">
-  <script src="/js/app.js" defer></script>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/vendor/inter/wght.css">
+  <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/vendor/bootstrap-icons/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/app.css">
+  <script src="/vendor/bootstrap/js/bootstrap.bundle.min.js" defer></script>
+  <script src="/js/app.js" type="module"></script>
 </head>
-<body class="app-page">
-  <header class="topbar">
-    <a class="brand-inline" href="/app.html"><span class="brand-mark small">OG</span><strong>Order<span>Go</span></strong></a>
-    <div class="topbar-user">
-      <div class="user-meta"><strong id="userName">Usuario</strong><span id="userRole">Rol</span></div>
-      <button id="logoutButton" class="btn btn-outline btn-small" type="button">Cerrar sesión</button>
+<body>
+  <a class="skip-link visually-hidden-focusable" href="#main">Saltar al contenido principal</a>
+
+  <div class="boot-screen" id="bootScreen" role="status" aria-live="polite">
+    <div class="text-center">
+      <div class="spinner-border text-secondary mb-3" aria-hidden="true"></div>
+      <p class="text-muted mb-0">Cargando OrderGo…</p>
     </div>
-  </header>
+  </div>
 
-  <main class="dashboard">
-    <section class="welcome-row">
-      <div><p class="eyebrow">PANEL DE CONTROL</p><h1>Administración del negocio</h1><p class="muted">Gestiona la información y consulta el estado de tus pedidos.</p></div>
-      <div class="session-chip"><span class="status-dot"></span> Sesión protegida</div>
-    </section>
+  <div class="app-shell">
+    <!-- ===================== Barra lateral ===================== -->
+    <aside class="sidebar offcanvas-lg offcanvas-start" id="sidebar" tabindex="-1" aria-label="Menú principal">
+      <div class="offcanvas-body">
+        <div class="sidebar-inner">
+          <div class="sidebar-header">
+            <a class="brand" href="#/panel" aria-label="OrderGo, ir al panel principal">
+              <span class="brand-logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="m9.5 14.5 2 2 3.5-4"/></svg></span>
+              <span class="brand-text"><span class="brand-name">Order<span>Go</span></span><span class="brand-tag">Gestión de pedidos</span></span>
+            </a>
+            <button type="button" class="btn-close d-lg-none" data-bs-dismiss="offcanvas" data-bs-target="#sidebar" aria-label="Cerrar menú"></button>
+          </div>
 
-    <nav class="tabs" aria-label="Secciones del sistema">
-      <button class="tab active" data-tab="orders" type="button">Pedidos</button>
-      <button class="tab" data-tab="clients" type="button">Clientes</button>
-      <button class="tab" data-tab="products" type="button">Productos</button>
-      <button class="tab admin-only" data-tab="users" type="button">Usuarios</button>
-    </nav>
+          <nav aria-label="Secciones">
+            <p class="sidebar-section-label">Operación</p>
+            <ul class="sidebar-nav">
+              <li><a class="sidebar-link" href="#/panel" data-route="panel" title="Panel principal"><i class="bi bi-grid-1x2" aria-hidden="true"></i><span class="nav-text">Panel principal</span></a></li>
+              <li><a class="sidebar-link" href="#/pedidos" data-route="pedidos" title="Pedidos"><i class="bi bi-receipt" aria-hidden="true"></i><span class="nav-text">Pedidos</span></a></li>
+              <li><a class="sidebar-link" href="#/clientes" data-route="clientes" title="Clientes"><i class="bi bi-people" aria-hidden="true"></i><span class="nav-text">Clientes</span></a></li>
+              <li><a class="sidebar-link" href="#/productos" data-route="productos" title="Productos"><i class="bi bi-basket" aria-hidden="true"></i><span class="nav-text">Productos</span></a></li>
+            </ul>
+            <div data-admin-only hidden>
+              <p class="sidebar-section-label mt-3">Administración</p>
+              <ul class="sidebar-nav">
+                <li><a class="sidebar-link" href="#/usuarios" data-route="usuarios" title="Usuarios"><i class="bi bi-person-gear" aria-hidden="true"></i><span class="nav-text">Usuarios</span></a></li>
+              </ul>
+            </div>
+          </nav>
 
-    <section id="ordersSection" class="tab-panel">
-      <div class="section-heading"><div><h2>Pedidos</h2><p class="muted">Registra pedidos y actualiza su estado.</p></div><button id="refreshOrders" class="btn btn-outline" type="button">Actualizar</button></div>
-      <div class="panel-card">
-        <h3>Registrar pedido</h3>
-        <form id="orderForm" class="form-grid">
-          <div><label for="orderClient">Cliente</label><select id="orderClient" required><option value="">Selecciona un cliente</option></select></div>
-          <div><label for="orderProduct">Producto</label><select id="orderProduct" required><option value="">Selecciona un producto</option></select></div>
-          <div><label for="orderQuantity">Cantidad</label><input id="orderQuantity" type="number" min="1" max="100" value="1" required></div>
-          <div class="form-grid-wide"><label for="orderNotes">Observaciones (opcional)</label><input id="orderNotes" type="text" maxlength="500" placeholder="Indicaciones del pedido"></div>
-          <div class="form-grid-wide"><button class="btn btn-primary" type="submit">Crear pedido</button></div>
-        </form>
+          <div class="sidebar-footer">
+            <div class="sidebar-user">
+              <span class="avatar" data-user-initials aria-hidden="true">–</span>
+              <div class="sidebar-user-meta"><strong data-user-name>Usuario</strong><span data-user-role>—</span></div>
+            </div>
+            <button type="button" class="sidebar-link" data-action="logout" title="Cerrar sesión"><i class="bi bi-box-arrow-left" aria-hidden="true"></i><span class="nav-text">Cerrar sesión</span></button>
+          </div>
+        </div>
       </div>
-      <div class="panel-card table-card"><div class="table-heading"><h3>Historial de pedidos</h3><select id="orderFilter" aria-label="Filtrar pedidos"><option value="">Todos los estados</option><option value="pendiente">Pendiente</option><option value="en_preparacion">En preparación</option><option value="listo">Listo</option><option value="entregado">Entregado</option><option value="cancelado">Cancelado</option></select></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Registró</th><th>Acciones</th></tr></thead><tbody id="ordersTable"><tr><td colspan="7" class="empty-cell">Cargando pedidos...</td></tr></tbody></table></div></div>
-    </section>
+    </aside>
 
-    <section id="clientsSection" class="tab-panel hidden">
-      <div class="section-heading"><div><h2>Clientes</h2><p class="muted">Registra y consulta los clientes del negocio.</p></div></div>
-      <div class="panel-card"><h3>Registrar cliente</h3><form id="clientForm" class="form-grid"><div><label for="clientName">Nombre</label><input id="clientName" maxlength="120" required></div><div><label for="clientPhone">Teléfono</label><input id="clientPhone" maxlength="25" required></div><div><label for="clientEmail">Correo</label><input id="clientEmail" type="email" maxlength="120"></div><div><label for="clientAddress">Dirección</label><input id="clientAddress" maxlength="255"></div><div class="form-grid-wide"><button class="btn btn-primary" type="submit">Guardar cliente</button></div></form></div>
-      <div class="panel-card table-card"><div class="table-heading"><h3>Directorio de clientes</h3><input id="clientSearch" class="search-input" type="search" placeholder="Buscar por nombre, teléfono o correo"></div><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Acciones</th></tr></thead><tbody id="clientsTable"><tr><td colspan="5" class="empty-cell">Cargando clientes...</td></tr></tbody></table></div></div>
-    </section>
+    <div class="app-main">
+      <!-- ===================== Barra superior ===================== -->
+      <header class="topbar">
+        <button type="button" class="icon-btn d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar" aria-label="Abrir menú">
+          <i class="bi bi-list" aria-hidden="true"></i>
+        </button>
+        <button type="button" class="icon-btn d-none d-lg-inline-grid" id="collapseSidebar" aria-pressed="false" aria-label="Contraer menú lateral">
+          <i class="bi bi-layout-sidebar-inset" aria-hidden="true"></i>
+        </button>
+        <div class="topbar-title">
+          <span class="app-label">OrderGo</span>
+          <h1 id="pageTitle">Panel principal</h1>
+        </div>
+        <div class="dropdown">
+          <button class="account-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Opciones de la cuenta">
+            <span class="avatar avatar-accent" data-user-initials aria-hidden="true">–</span>
+            <span class="account-meta"><strong data-user-name>Usuario</strong><span data-user-role-badge></span></span>
+            <i class="bi bi-chevron-down small text-muted" aria-hidden="true"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li class="px-3 py-2 d-md-none"><strong class="d-block" data-user-name>Usuario</strong><span data-user-role-badge></span></li>
+            <li class="d-md-none"><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item" type="button" data-action="open-profile"><i class="bi bi-person-circle" aria-hidden="true"></i>Mi cuenta</button></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><button class="dropdown-item text-danger" type="button" data-action="logout"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Cerrar sesión</button></li>
+          </ul>
+        </div>
+      </header>
 
-    <section id="productsSection" class="tab-panel hidden">
-      <div class="section-heading"><div><h2>Productos</h2><p class="muted">Consulta el catálogo y administra la disponibilidad.</p></div></div>
-      <div class="panel-card admin-only"><h3>Registrar producto</h3><form id="productForm" class="form-grid"><div><label for="productName">Nombre</label><input id="productName" maxlength="120" required></div><div><label for="productPrice">Precio (MXN)</label><input id="productPrice" type="number" min="0" step="0.01" required></div><div class="form-grid-wide"><label for="productDescription">Descripción</label><input id="productDescription" maxlength="500"></div><div class="form-grid-wide"><button class="btn btn-primary" type="submit">Guardar producto</button></div></form></div>
-      <div class="panel-card table-card"><div class="table-heading"><h3>Catálogo</h3><button id="refreshProducts" class="btn btn-outline btn-small" type="button">Actualizar</button></div><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Descripción</th><th>Precio</th><th>Disponibilidad</th><th>Acciones</th></tr></thead><tbody id="productsTable"><tr><td colspan="5" class="empty-cell">Cargando productos...</td></tr></tbody></table></div></div>
-    </section>
+      <main id="main" class="content" tabindex="-1">
+        <!-- ===================== Panel principal ===================== -->
+        <section class="view" data-view="panel" aria-labelledby="panelTitle" hidden>
+          <div class="page-header">
+            <div>
+              <h2 id="panelTitle">Hola, <span data-user-first-name>bienvenido</span></h2>
+              <p id="todayLabel">Resumen de la operación del negocio.</p>
+            </div>
+            <div class="page-actions">
+              <button type="button" class="btn btn-light" data-action="refresh-dashboard"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i>Actualizar</button>
+              <button type="button" class="btn btn-primary" data-action="new-order"><i class="bi bi-plus-lg" aria-hidden="true"></i>Nuevo pedido</button>
+            </div>
+          </div>
 
-    <section id="usersSection" class="tab-panel hidden admin-only">
-      <div class="section-heading"><div><h2>Usuarios</h2><p class="muted">Administra las cuentas y sus permisos de acceso.</p></div></div>
-      <div class="panel-card"><h3>Crear usuario</h3><form id="userForm" class="form-grid"><div><label for="newUserName">Nombre</label><input id="newUserName" maxlength="100" required></div><div><label for="newUserEmail">Correo</label><input id="newUserEmail" type="email" maxlength="120" required></div><div><label for="newUserPassword">Contraseña temporal</label><input id="newUserPassword" type="password" minlength="10" required><small>Mínimo 10 caracteres.</small></div><div><label for="newUserRole">Rol</label><select id="newUserRole"><option value="empleado">Empleado</option><option value="administrador">Administrador</option></select></div><div class="form-grid-wide"><button class="btn btn-primary" type="submit">Crear usuario</button></div></form></div>
-      <div class="panel-card table-card"><div class="table-heading"><h3>Cuentas registradas</h3><button id="refreshUsers" class="btn btn-outline btn-small" type="button">Actualizar</button></div><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="usersTable"><tr><td colspan="5" class="empty-cell">Cargando usuarios...</td></tr></tbody></table></div></div>
-    </section>
+          <div class="kpi-grid" id="kpiGrid" aria-live="polite"></div>
 
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  </main>
+          <div class="row g-3">
+            <div class="col-12 col-xl-8">
+              <div class="og-card">
+                <div class="og-card-header">
+                  <h3>Pedidos recientes</h3>
+                  <a class="btn btn-sm btn-light" href="#/pedidos">Ver todos <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+                </div>
+                <div class="table-wrap">
+                  <table class="table table-hover align-middle">
+                    <caption class="visually-hidden">Últimos cinco pedidos registrados</caption>
+                    <thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col" class="d-none d-md-table-cell">Fecha</th><th scope="col" class="text-end">Total</th><th scope="col">Estado</th></tr></thead>
+                    <tbody id="recentOrders"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-xl-4 d-flex flex-column gap-3">
+              <div class="og-card">
+                <div class="og-card-header"><h3>Accesos rápidos</h3></div>
+                <div class="og-card-body quick-actions">
+                  <button type="button" class="quick-action" data-action="new-order"><span class="kpi-icon tone-orange"><i class="bi bi-receipt" aria-hidden="true"></i></span><span><strong>Registrar pedido</strong><small>Agrega productos y confirma</small></span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+                  <button type="button" class="quick-action" data-action="new-client"><span class="kpi-icon tone-navy"><i class="bi bi-person-plus" aria-hidden="true"></i></span><span><strong>Registrar cliente</strong><small>Datos de contacto y dirección</small></span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+                  <button type="button" class="quick-action" data-action="new-product" data-admin-only hidden><span class="kpi-icon tone-teal"><i class="bi bi-basket" aria-hidden="true"></i></span><span><strong>Registrar producto</strong><small>Amplía el catálogo</small></span><i class="bi bi-chevron-right" aria-hidden="true"></i></button>
+                </div>
+              </div>
+              <div class="og-card">
+                <div class="og-card-header"><h3>Distribución por estado</h3></div>
+                <div class="og-card-body" id="stateDistribution"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ===================== Pedidos ===================== -->
+        <section class="view" data-view="pedidos" aria-labelledby="ordersTitle" hidden>
+          <div class="page-header">
+            <div><h2 id="ordersTitle">Pedidos</h2><p>Registra pedidos, consulta su detalle y actualiza su estado.</p></div>
+            <div class="page-actions"><button type="button" class="btn btn-primary" data-action="new-order"><i class="bi bi-plus-lg" aria-hidden="true"></i>Nuevo pedido</button></div>
+          </div>
+          <div class="og-card">
+            <div class="toolbar">
+              <div class="search-box">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <label for="orderSearch" class="visually-hidden">Buscar pedidos</label>
+                <input id="orderSearch" type="search" class="form-control" placeholder="Buscar por número de pedido o cliente" maxlength="100" autocomplete="off">
+              </div>
+              <label for="orderSort" class="visually-hidden">Ordenar pedidos</label>
+              <select id="orderSort" class="form-select">
+                <option value="desc">Más recientes primero</option>
+                <option value="asc">Más antiguos primero</option>
+              </select>
+            </div>
+            <div class="chip-group" id="orderChips" role="group" aria-label="Filtrar por estado"></div>
+            <div class="table-wrap">
+              <table class="table table-hover align-middle">
+                <caption class="visually-hidden">Listado de pedidos</caption>
+                <thead><tr>
+                  <th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col" class="d-none d-md-table-cell">Fecha y hora</th>
+                  <th scope="col" class="text-end">Total</th><th scope="col">Estado</th><th scope="col" class="d-none d-lg-table-cell">Registró</th>
+                  <th scope="col" class="text-end">Acciones</th>
+                </tr></thead>
+                <tbody id="ordersTbody"></tbody>
+              </table>
+            </div>
+            <div class="og-card-footer" id="ordersPager"></div>
+          </div>
+        </section>
+
+        <!-- ===================== Clientes ===================== -->
+        <section class="view" data-view="clientes" aria-labelledby="clientsTitle" hidden>
+          <div class="page-header">
+            <div><h2 id="clientsTitle">Clientes</h2><p>Directorio de clientes y sus datos de contacto.</p></div>
+            <div class="page-actions"><button type="button" class="btn btn-primary" data-action="new-client"><i class="bi bi-person-plus" aria-hidden="true"></i>Nuevo cliente</button></div>
+          </div>
+          <div class="og-card">
+            <div class="toolbar">
+              <div class="search-box">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <label for="clientSearch" class="visually-hidden">Buscar clientes</label>
+                <input id="clientSearch" type="search" class="form-control" placeholder="Buscar por nombre, teléfono o correo" maxlength="100" autocomplete="off">
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="table table-hover align-middle">
+                <caption class="visually-hidden">Directorio de clientes</caption>
+                <thead><tr>
+                  <th scope="col">Cliente</th><th scope="col">Teléfono</th><th scope="col" class="d-none d-md-table-cell">Correo</th>
+                  <th scope="col" class="d-none d-xl-table-cell">Dirección</th><th scope="col" class="d-none d-lg-table-cell">Alta</th><th scope="col" class="text-end">Acciones</th>
+                </tr></thead>
+                <tbody id="clientsTbody"></tbody>
+              </table>
+            </div>
+            <div class="og-card-footer" id="clientsPager"></div>
+          </div>
+        </section>
+
+        <!-- ===================== Productos ===================== -->
+        <section class="view" data-view="productos" aria-labelledby="productsTitle" hidden>
+          <div class="page-header">
+            <div><h2 id="productsTitle">Productos</h2><p id="productsSubtitle">Catálogo de alimentos y bebidas del negocio.</p></div>
+            <div class="page-actions" data-admin-only hidden><button type="button" class="btn btn-primary" data-action="new-product"><i class="bi bi-plus-lg" aria-hidden="true"></i>Nuevo producto</button></div>
+          </div>
+          <div class="og-card">
+            <div class="toolbar">
+              <div class="search-box">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <label for="productSearch" class="visually-hidden">Buscar productos</label>
+                <input id="productSearch" type="search" class="form-control" placeholder="Buscar producto por nombre" maxlength="100" autocomplete="off">
+              </div>
+              <label for="productFilter" class="visually-hidden" data-admin-only hidden>Disponibilidad</label>
+              <select id="productFilter" class="form-select" data-admin-only hidden>
+                <option value="todos">Todos los productos</option>
+                <option value="disponibles">Solo disponibles</option>
+              </select>
+            </div>
+            <div id="productsGrid" aria-live="polite"></div>
+            <div class="og-card-footer" id="productsPager"></div>
+          </div>
+        </section>
+
+        <!-- ===================== Usuarios (solo administrador) ===================== -->
+        <section class="view" data-view="usuarios" aria-labelledby="usersTitle" hidden>
+          <div class="page-header">
+            <div><h2 id="usersTitle">Usuarios</h2><p>Cuentas con acceso al sistema, roles y estado.</p></div>
+            <div class="page-actions"><button type="button" class="btn btn-primary" data-action="new-user"><i class="bi bi-person-plus" aria-hidden="true"></i>Nuevo usuario</button></div>
+          </div>
+          <div class="og-card">
+            <div class="table-wrap">
+              <table class="table table-hover align-middle">
+                <caption class="visually-hidden">Usuarios registrados</caption>
+                <thead><tr>
+                  <th scope="col">Usuario</th><th scope="col">Rol</th><th scope="col">Estado</th>
+                  <th scope="col" class="d-none d-md-table-cell">Alta</th><th scope="col" class="text-end">Acciones</th>
+                </tr></thead>
+                <tbody id="usersTbody"></tbody>
+              </table>
+            </div>
+            <div class="og-card-footer" id="usersPager"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: cliente ===================== -->
+  <div class="modal fade" id="clientModal" tabindex="-1" aria-labelledby="clientModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+      <form class="modal-content" id="clientForm">
+        <div class="modal-header">
+          <h2 class="modal-title" id="clientModalTitle">Nuevo cliente</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted small mb-3">Los campos marcados con <span class="required-mark" aria-hidden="true">*</span> son obligatorios.</p>
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="clientName" class="form-label" data-name="El nombre">Nombre completo<span class="required-mark" aria-hidden="true">*</span></label>
+              <input id="clientName" class="form-control" maxlength="120" required autocomplete="name">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="clientPhone" class="form-label" data-name="El teléfono">Teléfono<span class="required-mark" aria-hidden="true">*</span></label>
+              <input id="clientPhone" class="form-control" type="tel" inputmode="tel" maxlength="25" required data-rule="phone" autocomplete="tel" placeholder="55 1234 5678">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="clientEmail" class="form-label" data-name="El correo">Correo electrónico</label>
+              <input id="clientEmail" class="form-control" type="email" maxlength="120" autocomplete="email" placeholder="cliente@correo.com">
+            </div>
+            <div class="col-12">
+              <label for="clientAddress" class="form-label" data-name="La dirección">Dirección</label>
+              <input id="clientAddress" class="form-control" maxlength="255" autocomplete="street-address" placeholder="Calle, número, colonia">
+              <div class="form-text">Opcional. Útil para pedidos a domicilio.</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="clientSubmit"><i class="bi bi-check-lg" aria-hidden="true"></i>Guardar cliente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: producto ===================== -->
+  <div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+      <form class="modal-content" id="productForm">
+        <div class="modal-header">
+          <h2 class="modal-title" id="productModalTitle">Nuevo producto</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-sm-8">
+              <label for="productName" class="form-label" data-name="El nombre">Nombre<span class="required-mark" aria-hidden="true">*</span></label>
+              <input id="productName" class="form-control" maxlength="120" required placeholder="Ej. Hamburguesa clásica">
+            </div>
+            <div class="col-12 col-sm-4">
+              <label for="productPrice" class="form-label" data-name="El precio">Precio (MXN)<span class="required-mark" aria-hidden="true">*</span></label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input id="productPrice" class="form-control" type="number" inputmode="decimal" min="0" max="99999999" step="0.01" required placeholder="0.00">
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="productDescription" class="form-label" data-name="La descripción">Descripción</label>
+              <textarea id="productDescription" class="form-control" rows="3" maxlength="500" placeholder="Ingredientes, tamaño o presentación"></textarea>
+              <div class="form-text"><span id="productDescriptionCount">0</span>/500 caracteres</div>
+            </div>
+            <div class="col-12" id="productAvailabilityRow" hidden>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="productAvailable">
+                <label class="form-check-label" for="productAvailable">Disponible para nuevos pedidos</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="productSubmit"><i class="bi bi-check-lg" aria-hidden="true"></i>Guardar producto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: usuario ===================== -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down">
+      <form class="modal-content" id="userForm">
+        <div class="modal-header">
+          <h2 class="modal-title" id="userModalTitle">Nuevo usuario</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="userName" class="form-label" data-name="El nombre">Nombre<span class="required-mark" aria-hidden="true">*</span></label>
+              <input id="userName" class="form-control" maxlength="100" required autocomplete="off">
+            </div>
+            <div class="col-12">
+              <label for="userEmail" class="form-label" data-name="El correo">Correo electrónico<span class="required-mark" aria-hidden="true">*</span></label>
+              <input id="userEmail" class="form-control" type="email" maxlength="120" required autocomplete="off">
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="userRole" class="form-label">Rol<span class="required-mark" aria-hidden="true">*</span></label>
+              <select id="userRole" class="form-select" required>
+                <option value="empleado">Empleado</option>
+                <option value="administrador">Administrador</option>
+              </select>
+            </div>
+            <div class="col-12 col-sm-6">
+              <label for="userPassword" class="form-label" data-name="La contraseña" id="userPasswordLabel">Contraseña temporal<span class="required-mark" aria-hidden="true">*</span></label>
+              <input id="userPassword" class="form-control" type="password" minlength="10" maxlength="200" autocomplete="new-password" aria-describedby="userPasswordHelp">
+            </div>
+            <div class="col-12"><div class="form-text mt-0" id="userPasswordHelp">Mínimo 10 caracteres. Compártela de forma segura con la persona.</div></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="userSubmit"><i class="bi bi-check-lg" aria-hidden="true"></i>Guardar usuario</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: nuevo pedido ===================== -->
+  <div class="modal fade" id="orderModal" tabindex="-1" aria-labelledby="orderModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
+      <form class="modal-content" id="orderForm">
+        <div class="modal-header">
+          <h2 class="modal-title" id="orderModalTitle"><i class="bi bi-receipt me-2 text-primary" aria-hidden="true"></i>Nuevo pedido</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="order-builder">
+            <div>
+              <h3 class="step-title"><span class="step-num">1</span>Cliente</h3>
+              <div class="row g-2 align-items-start mb-4">
+                <div class="col-12 col-md-5">
+                  <label for="orderClientSearch" class="visually-hidden">Buscar cliente</label>
+                  <div class="search-box"><i class="bi bi-search" aria-hidden="true"></i><input id="orderClientSearch" type="search" class="form-control" placeholder="Buscar cliente…" maxlength="100" autocomplete="off"></div>
+                </div>
+                <div class="col-12 col-md-7 d-flex gap-2">
+                  <div class="flex-grow-1">
+                    <label for="orderClient" class="visually-hidden" data-name="El cliente">Cliente</label>
+                    <select id="orderClient" class="form-select" required><option value="">Selecciona un cliente</option></select>
+                  </div>
+                  <button type="button" class="btn btn-light flex-none" data-action="order-new-client" title="Registrar cliente nuevo"><i class="bi bi-person-plus" aria-hidden="true"></i><span class="d-none d-sm-inline">Nuevo</span></button>
+                </div>
+              </div>
+
+              <h3 class="step-title"><span class="step-num">2</span>Productos</h3>
+              <div class="search-box mb-3">
+                <i class="bi bi-search" aria-hidden="true"></i>
+                <label for="orderProductSearch" class="visually-hidden">Filtrar productos</label>
+                <input id="orderProductSearch" type="search" class="form-control" placeholder="Filtrar productos disponibles…" maxlength="100" autocomplete="off">
+              </div>
+              <div id="productPicker" class="picker-grid" role="group" aria-label="Productos disponibles. Selecciona para agregar al pedido."></div>
+            </div>
+
+            <aside class="summary-panel" aria-labelledby="orderSummaryTitle">
+              <h3 class="step-title mb-0" id="orderSummaryTitle"><span class="step-num">3</span>Resumen del pedido</h3>
+              <ul class="cart-list" id="cartList" aria-live="polite"></ul>
+              <div>
+                <label for="orderNotes" class="form-label" data-name="Las observaciones">Observaciones</label>
+                <textarea id="orderNotes" class="form-control" rows="2" maxlength="500" placeholder="Ej. sin cebolla, para llevar, pagar con tarjeta"></textarea>
+                <div class="form-text"><span id="orderNotesCount">0</span>/500 caracteres</div>
+              </div>
+              <div>
+                <div class="total-row"><span class="fw-semibold">Total estimado</span><strong id="cartTotal" class="tabular">$0.00</strong></div>
+                <p class="total-note mt-2 mb-0"><i class="bi bi-shield-check" aria-hidden="true"></i>El total definitivo lo calcula el sistema con los precios vigentes.</p>
+              </div>
+              <div class="alert alert-danger py-2 px-3 small mb-0" id="orderFormError" role="alert" hidden></div>
+            </aside>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-lg" id="orderSubmit"><i class="bi bi-check2-circle" aria-hidden="true"></i>Confirmar pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: detalle de pedido ===================== -->
+  <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-labelledby="orderDetailTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-md-down">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="orderDetailTitle">Detalle del pedido</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="orderDetailBody"></div>
+        <div class="modal-footer justify-content-between" id="orderDetailFooter"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: mi cuenta ===================== -->
+  <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="profileTitle">Mi cuenta</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body" id="profileBody"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-outline-danger" data-action="logout"><i class="bi bi-box-arrow-right" aria-hidden="true"></i>Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Modal: confirmación ===================== -->
+  <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-describedby="confirmMessage" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+      <div class="modal-content">
+        <div class="modal-body text-center pt-4">
+          <div class="confirm-icon mx-auto" data-confirm-icon></div>
+          <h2 class="h5 fw-bold" id="confirmTitle" data-confirm-title>¿Confirmar?</h2>
+          <p class="text-muted small mb-0" id="confirmMessage" data-confirm-message></p>
+        </div>
+        <div class="modal-footer border-0 justify-content-center pt-0 pb-4 gap-2">
+          <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" data-confirm-accept>Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toastStack"></div>
 </body>
 </html>

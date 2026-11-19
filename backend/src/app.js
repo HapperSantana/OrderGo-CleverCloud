@@ -12,6 +12,13 @@ const { notFound, errorHandler } = require('./middleware/errors');
 
 const app = express();
 const frontendPath = path.resolve(__dirname, '../../frontend');
+// Dependencias de interfaz auto-hospedadas (compatibles con la CSP 'self' de Helmet).
+const packageDir = (name) => path.dirname(require.resolve(`${name}/package.json`));
+const vendorAssets = {
+  '/vendor/bootstrap': path.join(packageDir('bootstrap'), 'dist'),
+  '/vendor/bootstrap-icons': path.join(packageDir('bootstrap-icons'), 'font'),
+  '/vendor/inter': packageDir('@fontsource-variable/inter')
+};
 const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
   .split(',')
   .map((origin) => origin.trim())
@@ -43,6 +50,9 @@ app.use('/api/productos', productRoutes);
 app.use('/api/pedidos', orderRoutes);
 
 app.use('/api', notFound);
+for (const [route, dir] of Object.entries(vendorAssets)) {
+  app.use(route, express.static(dir, { index: false, maxAge: '7d' }));
+}
 app.use(express.static(frontendPath, { index: false, extensions: ['html'] }));
 app.get('/', (req, res) => res.sendFile(path.join(frontendPath, 'login.html')));
 app.use(notFound);
