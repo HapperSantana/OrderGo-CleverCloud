@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Panel de administración de OrderGo">
+  <title>Panel | OrderGo</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/app.js" defer></script>
+</head>
+<body class="app-page">
+  <header class="topbar">
+    <a class="brand-inline" href="/app.html"><span class="brand-mark small">OG</span><strong>Order<span>Go</span></strong></a>
+    <div class="topbar-user">
+      <div class="user-meta"><strong id="userName">Usuario</strong><span id="userRole">Rol</span></div>
+      <button id="logoutButton" class="btn btn-outline btn-small" type="button">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <main class="dashboard">
+    <section class="welcome-row">
+      <div><p class="eyebrow">PANEL DE CONTROL</p><h1>Administración del negocio</h1><p class="muted">Gestiona la información y consulta el estado de tus pedidos.</p></div>
+      <div class="session-chip"><span class="status-dot"></span> Sesión protegida</div>
+    </section>
+
+    <nav class="tabs" aria-label="Secciones del sistema">
+      <button class="tab active" data-tab="orders" type="button">Pedidos</button>
+      <button class="tab" data-tab="clients" type="button">Clientes</button>
+      <button class="tab" data-tab="products" type="button">Productos</button>
+      <button class="tab admin-only" data-tab="users" type="button">Usuarios</button>
+    </nav>
+
+    <section id="ordersSection" class="tab-panel">
+      <div class="section-heading"><div><h2>Pedidos</h2><p class="muted">Registra pedidos y actualiza su estado.</p></div><button id="refreshOrders" class="btn btn-outline" type="button">Actualizar</button></div>
+      <div class="panel-card">
+        <h3>Registrar pedido</h3>
+        <form id="orderForm" class="form-grid">
+          <div><label for="orderClient">Cliente</label><select id="orderClient" required><option value="">Selecciona un cliente</option></select></div>
+          <div><label for="orderProduct">Producto</label><select id="orderProduct" required><option value="">Selecciona un producto</option></select></div>
+          <div><label for="orderQuantity">Cantidad</label><input id="orderQuantity" type="number" min="1" max="100" value="1" required></div>
+          <div class="form-grid-wide"><label for="orderNotes">Observaciones (opcional)</label><input id="orderNotes" type="text" maxlength="500" placeholder="Indicaciones del pedido"></div>
+          <div class="form-grid-wide"><button class="btn btn-primary" type="submit">Crear pedido</button></div>
+        </form>
+      </div>
+      <div class="panel-card table-card"><div class="table-heading"><h3>Historial de pedidos</h3><select id="orderFilter" aria-label="Filtrar pedidos"><option value="">Todos los estados</option><option value="pendiente">Pendiente</option><option value="en_preparacion">En preparación</option><option value="listo">Listo</option><option value="entregado">Entregado</option><option value="cancelado">Cancelado</option></select></div><div class="table-wrap"><table><thead><tr><th>Pedido</th><th>Cliente</th><th>Fecha</th><th>Total</th><th>Estado</th><th>Registró</th><th>Acciones</th></tr></thead><tbody id="ordersTable"><tr><td colspan="7" class="empty-cell">Cargando pedidos...</td></tr></tbody></table></div></div>
+    </section>
+
+    <section id="clientsSection" class="tab-panel hidden">
+      <div class="section-heading"><div><h2>Clientes</h2><p class="muted">Registra y consulta los clientes del negocio.</p></div></div>
+      <div class="panel-card"><h3>Registrar cliente</h3><form id="clientForm" class="form-grid"><div><label for="clientName">Nombre</label><input id="clientName" maxlength="120" required></div><div><label for="clientPhone">Teléfono</label><input id="clientPhone" maxlength="25" required></div><div><label for="clientEmail">Correo</label><input id="clientEmail" type="email" maxlength="120"></div><div><label for="clientAddress">Dirección</label><input id="clientAddress" maxlength="255"></div><div class="form-grid-wide"><button class="btn btn-primary" type="submit">Guardar cliente</button></div></form></div>
+      <div class="panel-card table-card"><div class="table-heading"><h3>Directorio de clientes</h3><input id="clientSearch" class="search-input" type="search" placeholder="Buscar por nombre, teléfono o correo"></div><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Teléfono</th><th>Correo</th><th>Dirección</th><th>Acciones</th></tr></thead><tbody id="clientsTable"><tr><td colspan="5" class="empty-cell">Cargando clientes...</td></tr></tbody></table></div></div>
+    </section>
+
+    <section id="productsSection" class="tab-panel hidden">
+      <div class="section-heading"><div><h2>Productos</h2><p class="muted">Consulta el catálogo y administra la disponibilidad.</p></div></div>
+      <div class="panel-card admin-only"><h3>Registrar producto</h3><form id="productForm" class="form-grid"><div><label for="productName">Nombre</label><input id="productName" maxlength="120" required></div><div><label for="productPrice">Precio (MXN)</label><input id="productPrice" type="number" min="0" step="0.01" required></div><div class="form-grid-wide"><label for="productDescription">Descripción</label><input id="productDescription" maxlength="500"></div><div class="form-grid-wide"><button class="btn btn-primary" type="submit">Guardar producto</button></div></form></div>
+      <div class="panel-card table-card"><div class="table-heading"><h3>Catálogo</h3><button id="refreshProducts" class="btn btn-outline btn-small" type="button">Actualizar</button></div><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Descripción</th><th>Precio</th><th>Disponibilidad</th><th>Acciones</th></tr></thead><tbody id="productsTable"><tr><td colspan="5" class="empty-cell">Cargando productos...</td></tr></tbody></table></div></div>
+    </section>
+
+    <section id="usersSection" class="tab-panel hidden admin-only">
+      <div class="section-heading"><div><h2>Usuarios</h2><p class="muted">Administra las cuentas y sus permisos de acceso.</p></div></div>
+      <div class="panel-card"><h3>Crear usuario</h3><form id="userForm" class="form-grid"><div><label for="newUserName">Nombre</label><input id="newUserName" maxlength="100" required></div><div><label for="newUserEmail">Correo</label><input id="newUserEmail" type="email" maxlength="120" required></div><div><label for="newUserPassword">Contraseña temporal</label><input id="newUserPassword" type="password" minlength="10" required><small>Mínimo 10 caracteres.</small></div><div><label for="newUserRole">Rol</label><select id="newUserRole"><option value="empleado">Empleado</option><option value="administrador">Administrador</option></select></div><div class="form-grid-wide"><button class="btn btn-primary" type="submit">Crear usuario</button></div></form></div>
+      <div class="panel-card table-card"><div class="table-heading"><h3>Cuentas registradas</h3><button id="refreshUsers" class="btn btn-outline btn-small" type="button">Actualizar</button></div><div class="table-wrap"><table><thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="usersTable"><tr><td colspan="5" class="empty-cell">Cargando usuarios...</td></tr></tbody></table></div></div>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </main>
+</body>
+</html>

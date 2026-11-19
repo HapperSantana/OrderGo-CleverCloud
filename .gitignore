@@ -1,0 +1,11 @@
+backend/node_modules/
+backend/sql/
+backend/.env
+backend/.env.example
+.DS_Store
+.clever.json
+.env
+node_modules/
+*.log
+docs/
+*.md
